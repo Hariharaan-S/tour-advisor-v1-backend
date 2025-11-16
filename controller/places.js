@@ -9,8 +9,8 @@ const router = express.Router();
 router.get("/details/:placeId", async (req, res) => {
     const placeId = req.params.placeId;
     const places_array = await fetchPlaces(placeId);
-    const filteredArray = places_array.filter((place) => place.place_id === placeId);
-    res.json(filteredArray);
+    //const filteredArray = places_array.filter((place) => place.place_id === placeId);
+    res.json(places_array);
 });
 
 export default router;

@@ -1,7 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
-import placesRouter from "./routes/places.js";
-import planRouter from "./routes/plans.js";
+import placesRouter from "./controller/places.js";
+import planRouter from "./controller/plans.js";
 
 dotenv.config();
 const app = express();
