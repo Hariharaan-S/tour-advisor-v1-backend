@@ -3,8 +3,8 @@ import dotenv from "dotenv";
 import cors from "cors";
 import AuthRouter from "./controller/auth.js";
 import placesRouter from "./controller/places.js";
-import planRouter from "./controller/plans.js";
-import { mongooseClient, redisClient } from "./utils/db.utils.js";
+import planRouter from "./controller/trip-plan.js";
+import { mongooseClient } from "./utils/db.utils.js";
 
 dotenv.config();
 const app = express();

@@ -82,3 +82,18 @@ export const refreshToken = async (token) => {
         throw error;
     }
 };
+
+export const findByIdAndUpdateTripPlan = async (id, updateData) => {
+    try {
+        // Implement logic to find the user by ID and update their trip plans
+        // For example, you could use a method like User.findByIdAndUpdate to update the user's trip plans in the database
+        // Example:
+        // const updatedUser = await User.findByIdAndUpdate(id, { $set: { tripPlans: updateData } }, { new: true });
+        // return updatedUser;
+        const updatedUser = await User.findByIdAndUpdate(id, { $push: { tripPlans: updateData } }, { new: true });
+        return updatedUser;
+    } catch (error) {
+        console.error("Error updating user's trip plans:", error);
+        throw error;
+    }
+};
