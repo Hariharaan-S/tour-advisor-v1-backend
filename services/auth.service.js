@@ -1,12 +1,8 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { createHash } from "crypto";
 import { createUser, findUserByEmail } from "../repository/user.repository.js";
 import { redisClient } from "../utils/db.utils.js";
-
-const hashId = (id) => {
-    return createHash("sha256").update(String(id)).digest("hex");
-};
+import { hashId } from "../utils/auth-middleware.utils.js";
 
 const createTokens = (payload) => {
     const accessToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "15m" });

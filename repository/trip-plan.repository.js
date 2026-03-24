@@ -22,7 +22,7 @@ export const getAllTripPlans = async () => {
 
 export const getPlanById = async (id) => {
     try {
-        return await TripPlan.findById(id);
+        return await TripPlan.findOne({ planId: id });
     } catch (error) {
         console.error("Error fetching trip plan by ID:", error);
         throw error;

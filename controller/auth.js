@@ -1,5 +1,5 @@
 import express from "express";
-import { registerUser, loginUser } from "../services/auth.service.js";
+import { registerUser, loginUser, refreshToken, logoutUser } from "../services/auth.service.js";
 
 
 const router = express.Router();
@@ -8,12 +8,13 @@ router.post("/register", async (req, res) => {
     const { username, email, password } = req.body;
     try {
         const registerResponse = await registerUser(username, email, password);
-        const { accessToken, refreshToken } = registerResponse;
+        const { accessToken, refreshToken, ...userPayload } = registerResponse;
         
         res.status(201).header("Authorization", `Bearer ${accessToken}`).json({
             message: "User registered successfully",
             accessToken,
             refreshToken,
+            user: userPayload,
         });
     } catch (error) {
         console.error("Error registering user:", error);
@@ -25,8 +26,8 @@ router.post("/login", async (req, res) => {
     const { email, password } = req.body;
     try {
         const loginResponse = await loginUser(email, password);
-        const { accessToken, refreshToken } = loginResponse;
-        res.status(200).json({ message: "Login successful", accessToken, refreshToken });
+        const { accessToken, refreshToken, ...userPayload } = loginResponse;
+        res.status(200).json({ message: "Login successful", accessToken, refreshToken, user: userPayload });
     } catch (error) {
         res.status(500).json({ message: "Error logging in", error: error.message });
     }

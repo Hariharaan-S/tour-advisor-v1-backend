@@ -11,7 +11,12 @@ const touristSpotsSchema = new Schema({
 const transportSchema = new Schema({
     name: {type: String},
     average_cost: {type: Number},
-    duration: {type: Number}
+    duration: {type: Number},
+    fare_band: {type: String},
+    distance_km: {type: Number},
+    fare_mode: {type: String},
+    origin: {type: String},
+    destination: {type: String}
 })
 
 const instructionSchema = new Schema ({
@@ -22,6 +27,9 @@ const instructionSchema = new Schema ({
 })
 
 const costSummarySchema = new Schema({
+    place_cost_per_person: {type: Number},
+    travel_cost_per_person: {type: Number},
+    total_cost_per_person: {type: Number},
     total_cost_for_people: {type: Number},
     people_count: {type: Number},
 })
