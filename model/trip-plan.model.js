@@ -23,6 +23,7 @@ const instructionSchema = new Schema ({
     day: {type: Number},
     time: {type: String},
     place_name: {type: String},
+    description: {type: String},
     location_link: {type: String}
 })
 

@@ -1,13 +1,44 @@
 import express from "express";
-import { makeNewTripPlan,getUserTrackedPlans, getTripPlanById } from "../services/trip-plan.service.js";
+import path from "path";
+import {
+  makeNewTripPlan,
+  getUserTrackedPlans,
+  getTripPlanById,
+} from "../services/trip-plan.service.js";
 import { authenticateToken } from "../middleware/auth.middleware.js";
 
 const planRouter = express.Router();
 
-planRouter.get("/view-all/:userId", authenticateToken,  async(req,res) => {
+planRouter.get("/image/:placeName", async (req, res) => {
+  const { placeName } = req.params;
+  if (!placeName) {
+    return res.status(400).json({ message: "Place name is required" });
+  }
+
+  try {
+    const filePath = path.join(process.cwd(), "images", `${placeName}.jpg`);
+
+    return res.sendFile(filePath, (err) => {
+      if (err) {
+        console.error("Error fetching image:", err);
+        if (err.code === "ENOENT") {
+          return res.status(404).json({ message: "Image not found" });
+        }
+        return res.status(500).json({ message: "Error fetching image" });
+      }
+    });
+  } catch (error) {
+    console.error("Error fetching image:", error);
+    res.status(500).json({ message: "Error fetching image" });
+  }
+});
+
+planRouter.get("/view-all/:userId", authenticateToken, async (req, res) => {
   const userId = req.params.userId;
-  if(!userId) {
-    return res.status(401).json({ message: "User identity not found in request" });
+  if (!userId) {
+    return res
+      .status(401)
+      .json({ message: "User identity not found in request" });
   }
 
   const userPlans = await getUserTrackedPlans(userId);
@@ -15,55 +46,70 @@ planRouter.get("/view-all/:userId", authenticateToken,  async(req,res) => {
     return res.status(404).json({ message: "No trip plans found for user" });
   }
 
-  
   let userPlansArray = new Array(userPlans.length);
   for (const userPlan of userPlans[0].planId) {
-    userPlansArray.push(await getTripPlanById(userPlan))
+    userPlansArray.push(await getTripPlanById(userPlan));
   }
 
-  res.status(200).json({ message: "Trip plans retrieved successfully", userPlansArray });
-
-})
-
-planRouter.get("/view-plan/:userId/:planId", authenticateToken, async(req, res) => {
-
-  const {userId, planId} = req.params;
-  if (!userId) {
-    return res.status(401).json({ message: "User identity not found in token" });
-  }
-
-  const userPlans = await getUserTrackedPlans(userId);
-  if (!userPlans) {
-    return res.status(404).json({ message: "No trip plans found for user" });
-  }
-  
-  let targetPlanId;
-  for (const userPlan of userPlans) {
-    if (userPlan.planId.includes(planId)) {
-      targetPlanId = planId;
-      break;
-    }
-  }
-  if (!targetPlanId) {
-    return res.status(404).json({ message: "Target trip plan not found" });
-  }
-  const planData = await getTripPlanById(targetPlanId);
-  if (!planData) {
-    return res.status(404).json({ message: "Trip plan data not found" });
-  }
-  
-  res.status(200).json({ message: "Trip plan retrieved successfully", planData });
+  res
+    .status(200)
+    .json({ message: "Trip plans retrieved successfully", userPlansArray });
 });
+
+planRouter.get(
+  "/view-plan/:userId/:planId",
+  authenticateToken,
+  async (req, res) => {
+    const { userId, planId } = req.params;
+    if (!userId) {
+      return res
+        .status(401)
+        .json({ message: "User identity not found in token" });
+    }
+
+    const userPlans = await getUserTrackedPlans(userId);
+    if (!userPlans) {
+      return res.status(404).json({ message: "No trip plans found for user" });
+    }
+
+    let targetPlanId;
+    for (const userPlan of userPlans) {
+      if (userPlan.planId.includes(planId)) {
+        targetPlanId = planId;
+        break;
+      }
+    }
+    if (!targetPlanId) {
+      return res.status(404).json({ message: "Target trip plan not found" });
+    }
+    const planData = await getTripPlanById(targetPlanId);
+    if (!planData) {
+      return res.status(404).json({ message: "Trip plan data not found" });
+    }
+
+    res
+      .status(200)
+      .json({ message: "Trip plan retrieved successfully", planData });
+  },
+);
 
 planRouter.post("/make-plan", authenticateToken, async (req, res) => {
   try {
     const { cityName, numberOfDays, budget, coordinates, userId } = req.body;
 
     if (!userId) {
-      return res.status(401).json({ message: "User identity not found in token" });
+      return res
+        .status(401)
+        .json({ message: "User identity not found in token" });
     }
 
-    const tripPlan = await makeNewTripPlan(cityName, numberOfDays, budget, userId, coordinates);
+    const tripPlan = await makeNewTripPlan(
+      cityName,
+      numberOfDays,
+      budget,
+      userId,
+      coordinates,
+    );
 
     //TODO: From tripPlan, for each plan, extract the title,description and total_cost_for_people and send it back in the response for frontend to show in the card view.
 

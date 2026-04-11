@@ -24,3 +24,5 @@ Thumbs.db
 
 # Lock files (optional)
 package-lock.json
+
+images/
