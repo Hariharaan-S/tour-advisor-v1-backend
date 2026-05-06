@@ -36,21 +36,23 @@ router.post("/login", async (req, res) => {
 
 router.post("/refresh/token", async (req, res) => {
     const { token } = req.body;
-    console.log(token);
+    console.log("Received refresh token:", token);
     
     if (!token) {
+        console.log("No refresh token provided");
         return res.status(401).json({ message: "Refresh token not recognized" });
     }
 
     try {
         const { accessToken, refreshToken: newRefreshToken } = await refreshTokenService(token);
-
+        console.log("Token refreshed successfully");
         res.status(200).json({
             message: "Token refreshed",
             accessToken,
             refreshToken: newRefreshToken,
         });
     } catch (error) {
+        console.log("Auth Service: Error refreshing token:", error);
         res.status(401).json({ message: "Invalid token", error: error.message });
     }
 });
