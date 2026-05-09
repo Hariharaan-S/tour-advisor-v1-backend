@@ -13,7 +13,7 @@ const normalizeTouristSpots = (spots) => {
 
 export const makeNewTripPlan = async (cityName, numberOfDays, budget, userId, coordinates) => {
   try {
-    const response = await fetch("http://127.0.0.1:8000/plan-trip", {
+    const response = await fetch("http://TAPlanneragent:8000/plan-trip", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

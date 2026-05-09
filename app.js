@@ -1,12 +1,11 @@
 import express from "express";
-import dotenv from "dotenv";
+import 'dotenv/config'
 import cors from "cors";
 import AuthRouter from "./controller/auth.js";
 import placesRouter from "./controller/places.js";
 import planRouter from "./controller/trip-plan.js";
 import { mongooseClient } from "./utils/db.utils.js";
 
-dotenv.config();
 const app = express();
 
 app.use(express.json());
